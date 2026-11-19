@@ -1,6 +1,6 @@
 # Requisitos do primeiro protótipo
 
-A demonstração usa uma atividade fictícia, **Plantio de milho**, e reúne o formulário, a lista e o resumo de gastos em uma tela.
+A demonstração usa uma atividade fictícia, **Plantio de milho**, e mostra o resumo e a lista de gastos em uma tela. O formulário abre ao adicionar ou editar uma despesa.
 
 | Requisito | Critério para a demonstração |
 | --- | --- |
@@ -17,7 +17,7 @@ A demonstração usa uma atividade fictícia, **Plantio de milho**, e reúne o f
 
 ## Decisões técnicas iniciais
 
-A primeira versão será uma página web em HTML, CSS e JavaScript, ajustada para telas de celular. A persistência local pode ser acrescentada após o fluxo básico funcionar.
+O protótipo funciona em uma página web em HTML, CSS e JavaScript, ajustada para telas de celular. Os valores são somados em centavos e os registros são salvos no próprio navegador. Para a avaliação de usabilidade, consulte o [roteiro de avaliação](design.md#avaliação-com-participantes).
 
 ## Proposta a validar
 
