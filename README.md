@@ -12,10 +12,11 @@ python3 -m http.server 8000
 
 No Windows, use `py -m http.server 8000` caso o Python esteja disponível pelo comando `py`. Abra [localhost:8000](http://localhost:8000). A demonstração roda em HTML, CSS e JavaScript e usa o logo incluído no repositório.
 
-1. Confira os **R$ 20,00** de transporte que vêm como exemplo.
-2. Em **Adicionar despesa**, lance **R$ 80,00** de adubo. O total passa a **R$ 100,00**.
-3. Escolha **Editar** no adubo e altere para **R$ 65,00**. O total passa a **R$ 85,00**.
-4. Recarregue no mesmo navegador para conferir se o lançamento foi salvo.
+1. Clique em **Entrar com conta de teste**. A entrada é simulada.
+2. Em **Minhas roças**, clique em **Cadastrar roça**. Informe um nome fictício. Cultura e município são opcionais.
+3. Abra a roça cadastrada e registre uma despesa. Cada roça tem seus próprios lançamentos.
+4. Abra **Plantio de milho** para repetir o cenário da demonstração. Some R$ 80,00 de adubo aos R$ 20,00 de transporte. Depois, corrija o adubo para R$ 65,00 e confira o total de R$ 85,00.
+5. Recarregue a página para conferir a persistência. Use **Sair da demonstração** para voltar à entrada.
 
 Os dados ficam no navegador em que foram registrados. Para repetir a demonstração desde o começo, abra a página em uma sessão privada nova.
 
@@ -33,4 +34,4 @@ Os dados ficam no navegador em que foram registrados. Para repetir a demonstraç
 
 ## Continuidade
 
-O objetivo é evoluir para um aplicativo instalável. O banco de dados remoto, a sincronização entre celulares e a integração com a API a ser definida pela TwinCore são etapas futuras. A utilidade do acesso compartilhado também será investigada em campo.
+O objetivo é evoluir para um aplicativo instalável com autenticação de verdade. A equipe ainda precisa validar se algum uso futuro exige comprovação de vínculo com uma roça. O banco de dados remoto, a sincronização entre celulares e a integração com a API a ser definida pela TwinCore são etapas futuras. A utilidade do acesso compartilhado também será investigada em campo.

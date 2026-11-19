@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f7f5ed">
-  <title>Plantio de milho | AgroManage AI</title>
+  <title>AgroManage AI</title>
   <meta name="description" content="Protótipo do AgroManage AI para registrar e acompanhar despesas agrícolas.">
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
@@ -19,31 +19,78 @@
   </header>
 
   <main class="page" id="conteudo" tabindex="-1">
-    <h1>Plantio de milho</h1>
+    <section class="welcome ledger" id="login-screen" aria-labelledby="login-title">
+      <h1 id="login-title" tabindex="-1">Entrar no AgroManage AI</h1>
+      <p>Use a conta de teste para cadastrar roças e acompanhar despesas.</p>
+      <button class="button button-primary" type="button" id="login">Entrar com conta de teste</button>
+    </section>
 
-    <section class="summary" aria-labelledby="summary-title">
-      <div class="summary-text">
-        <h2 id="summary-title">Total de despesas</h2>
-        <p class="summary-amount" id="total">R$ 0,00</p>
-        <p class="summary-count" id="count"></p>
+    <section id="fields-screen" aria-labelledby="fields-title" hidden>
+      <div class="screen-heading">
+        <h1 id="fields-title" tabindex="-1">Minhas roças</h1>
+        <button class="button button-secondary" type="button" id="logout">Sair da demonstração</button>
       </div>
-      <button class="button button-add" type="button" id="add-expense">
-        <span aria-hidden="true">+</span> Adicionar despesa
-      </button>
+      <button class="button button-primary" type="button" id="add-field">Cadastrar roça</button>
+      <p class="status" id="field-feedback" role="status" aria-atomic="true"></p>
+      <ul class="field-list" id="fields" aria-label="Roças cadastradas" role="list"></ul>
     </section>
 
-    <p class="status" id="feedback" role="status" aria-atomic="true"></p>
+    <section id="expenses-screen" aria-labelledby="field-title" hidden>
+      <div class="screen-heading">
+        <h1 id="field-title" tabindex="-1"></h1>
+        <button class="button button-secondary" type="button" id="back-fields">Voltar para minhas roças</button>
+      </div>
+
+      <section class="summary" aria-labelledby="summary-title">
+        <div class="summary-text">
+          <h2 id="summary-title">Total de despesas</h2>
+          <p class="summary-amount" id="total">R$ 0,00</p>
+          <p class="summary-count" id="count"></p>
+        </div>
+        <button class="button button-add" type="button" id="add-expense">
+          <span aria-hidden="true">+</span> Adicionar despesa
+        </button>
+      </section>
+
+      <p class="status" id="feedback" role="status" aria-atomic="true"></p>
+
+      <section class="ledger" aria-labelledby="ledger-title">
+        <h2 id="ledger-title">Despesas registradas</h2>
+        <ul class="expense-list" id="expenses" role="list"></ul>
+        <p class="empty" id="empty" hidden>Nenhuma despesa registrada.</p>
+      </section>
+    </section>
+
     <p class="status status-warning" id="storage-warning" role="status" aria-atomic="true"></p>
-
-    <section class="ledger" aria-labelledby="ledger-title">
-      <h2 id="ledger-title">Despesas registradas</h2>
-      <ul class="expense-list" id="expenses" role="list"></ul>
-      <p class="empty" id="empty" hidden>Nenhuma despesa registrada.</p>
-    </section>
-
     <p class="local-note">Os registros desta demonstração ficam neste navegador.</p>
-    <noscript><p>Ative o JavaScript para adicionar ou editar despesas.</p></noscript>
+    <noscript><p>Ative o JavaScript para usar a demonstração.</p></noscript>
   </main>
+
+  <dialog class="expense-dialog" id="field-dialog" aria-labelledby="field-dialog-title">
+    <form id="field-form" novalidate>
+      <h2 id="field-dialog-title">Cadastrar roça</h2>
+      <div class="field">
+        <label for="field-name">Nome da roça</label>
+        <input id="field-name" name="fieldName" maxlength="80" placeholder="Ex.: Roça do Alto"
+               required autofocus aria-describedby="field-name-error">
+        <p class="field-error" id="field-name-error" hidden></p>
+      </div>
+      <div class="field-pair">
+        <div class="field">
+          <label for="crop">O que planta (opcional)</label>
+          <input id="crop" name="crop" maxlength="80" placeholder="Ex.: Feijão">
+        </div>
+        <div class="field">
+          <label for="city">Município (opcional)</label>
+          <input id="city" name="city" maxlength="80" placeholder="Ex.: Salgueiro">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="button button-secondary" type="button" id="cancel-field">Cancelar</button>
+        <button class="button button-primary" type="submit">Salvar roça</button>
+      </div>
+    </form>
+  </dialog>
 
   <dialog class="expense-dialog" id="expense-dialog" aria-labelledby="dialog-title">
     <form id="expense-form" novalidate>

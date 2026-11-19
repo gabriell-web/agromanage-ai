@@ -1,6 +1,9 @@
 "use strict";
 
-const STORAGE_KEY = "agromanage.expenses.v1";
+const EXPENSES_KEY = "agromanage.expenses.v1";
+const FIELDS_KEY = "agromanage.fields.v1";
+const SESSION_KEY = "agromanage.demo-session.v1";
+const EXAMPLE_FIELD = { id: "milho-demo", name: "Plantio de milho", crop: "Milho", city: "" };
 const MAX_TOTAL_CENTS = 99_999_999_999;
 const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 const decimal = new Intl.NumberFormat("pt-BR", {
@@ -8,6 +11,19 @@ const decimal = new Intl.NumberFormat("pt-BR", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
+
+const screens = {
+  login: document.querySelector("#login-screen"),
+  fields: document.querySelector("#fields-screen"),
+  expenses: document.querySelector("#expenses-screen"),
+};
+const fieldList = document.querySelector("#fields");
+const fieldFeedback = document.querySelector("#field-feedback");
+const fieldTitle = document.querySelector("#field-title");
+const fieldDialog = document.querySelector("#field-dialog");
+const fieldForm = document.querySelector("#field-form");
+const fieldName = fieldForm.elements.fieldName;
+const addFieldButton = document.querySelector("#add-field");
 
 const form = document.querySelector("#expense-form");
 const dialog = document.querySelector("#expense-dialog");
@@ -21,7 +37,10 @@ const amount = form.elements.amount;
 const date = form.elements.date;
 
 let storageAvailable = true;
-let expenses = loadExpenses();
+let fields = loadRecords(FIELDS_KEY, [EXAMPLE_FIELD], isValidField);
+let activeField = null;
+let expenses = [];
+const expenseCache = new Map();
 let editingId = null;
 let focusAfterClose = addButton;
 
@@ -64,14 +83,21 @@ function isValidExpense(item) {
     && item.amountCents > 0 && typeof item.date === "string" && isValidDate(item.date);
 }
 
-function loadExpenses() {
+function isValidField(item) {
+  return item && typeof item.id === "string" && item.id.length > 0
+    && typeof item.name === "string" && item.name.trim().length > 0 && item.name.length <= 80
+    && typeof item.crop === "string" && item.crop.length <= 80
+    && typeof item.city === "string" && item.city.length <= 80;
+}
+
+function loadRecords(key, fallback, isValid, validList = () => true) {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(key);
     if (saved !== null) {
       const records = JSON.parse(saved);
-      if (!Array.isArray(records) || !records.every(isValidExpense)
+      if (!Array.isArray(records) || !records.every(isValid)
           || new Set(records.map(item => item.id)).size !== records.length
-          || totalCents(records) > MAX_TOTAL_CENTS) {
+          || !validList(records)) {
         throw new Error("Formato de dados incompatível.");
       }
       return records;
@@ -80,13 +106,26 @@ function loadExpenses() {
     storageAvailable = false;
     warning.textContent = "Os registros salvos estão indisponíveis. Nesta sessão, as alterações duram até fechar a página.";
   }
-  return [{ id: "exemplo-transporte", description: "Transporte", amountCents: 2000, date: today() }];
+  return fallback;
 }
 
-function persist(records) {
+function expensesKey(field) {
+  // Mantém os lançamentos do primeiro protótipo na roça de exemplo.
+  return field.id === EXAMPLE_FIELD.id ? EXPENSES_KEY : EXPENSES_KEY + "." + field.id;
+}
+
+function loadExpenses(field) {
+  const sample = field.id === EXAMPLE_FIELD.id
+    ? [{ id: "exemplo-transporte", description: "Transporte", amountCents: 2000, date: today() }]
+    : [];
+  return loadRecords(expensesKey(field), sample, isValidExpense,
+    records => totalCents(records) <= MAX_TOTAL_CENTS);
+}
+
+function persist(key, records) {
   if (!storageAvailable) return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    localStorage.setItem(key, JSON.stringify(records));
   } catch {
     storageAvailable = false;
     warning.textContent = "O navegador não conseguiu salvar os registros. As alterações duram até fechar a página.";
@@ -185,7 +224,7 @@ form.addEventListener("submit", event => {
   }
 
   const record = {
-    id: editingId ?? (globalThis.crypto?.randomUUID?.() ?? Date.now() + "-" + Math.random()),
+    id: editingId ?? makeId(),
     description: name,
     amountCents: cents,
     date: date.value,
@@ -200,8 +239,9 @@ form.addEventListener("submit", event => {
     return;
   }
 
-  persist(next);
+  persist(expensesKey(activeField), next);
   expenses = next;
+  expenseCache.set(activeField.id, next);
   renderExpenses();
 
   if (editingId) {
@@ -213,11 +253,124 @@ form.addEventListener("submit", event => {
   feedback.textContent = storageAvailable ? action + "." : action + " nesta sessão.";
 });
 
-window.addEventListener("storage", event => {
-  if (event.key !== STORAGE_KEY || !storageAvailable) return;
-  expenses = loadExpenses();
+function makeId() {
+  return globalThis.crypto?.randomUUID?.() ?? Date.now() + "-" + Math.random();
+}
+
+function readSession() {
+  try {
+    return sessionStorage.getItem(SESSION_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function changeSession(value) {
+  // A sessão é um estado da demonstração, sem autenticação.
+  try {
+    if (value === null) sessionStorage.removeItem(SESSION_KEY);
+    else sessionStorage.setItem(SESSION_KEY, value);
+  } catch {
+    // O fluxo continua nesta aba quando a sessão não pode ser persistida.
+  }
+}
+
+function showScreen(name, moveFocus = true) {
+  for (const [key, screen] of Object.entries(screens)) screen.hidden = key !== name;
+  if (moveFocus) screens[name].querySelector("h1").focus();
+}
+
+function renderFields() {
+  const rows = fields.map(field => {
+    const row = element("li", "field-row");
+    const details = element("div", "field-details");
+    details.append(element("p", "expense-description", field.name));
+    const context = [field.crop, field.city].filter(Boolean).join(" · ");
+    if (context) details.append(element("p", "expense-date", context));
+
+    const open = element("button", "button button-edit", "Abrir");
+    open.type = "button";
+    open.setAttribute("aria-label", "Abrir roça: " + field.name);
+    open.addEventListener("click", () => openField(field));
+    row.append(details, open);
+    return row;
+  });
+  fieldList.replaceChildren(...rows);
+}
+
+function openField(field, moveFocus = true) {
+  activeField = field;
+  expenses = expenseCache.get(field.id) ?? loadExpenses(field);
+  expenseCache.set(field.id, expenses);
+  fieldTitle.textContent = field.name;
+  feedback.textContent = "";
+  changeSession(field.id);
   renderExpenses();
-  feedback.textContent = "Despesas atualizadas a partir de outra aba.";
+  showScreen("expenses", moveFocus);
+}
+
+function showFields(moveFocus = true) {
+  activeField = null;
+  fieldFeedback.textContent = "";
+  changeSession("");
+  renderFields();
+  showScreen("fields", moveFocus);
+}
+
+document.querySelector("#login").addEventListener("click", () => showFields());
+document.querySelector("#back-fields").addEventListener("click", () => showFields());
+document.querySelector("#logout").addEventListener("click", () => {
+  changeSession(null);
+  showScreen("login");
 });
 
-renderExpenses();
+addFieldButton.addEventListener("click", () => {
+  fieldForm.reset();
+  fieldError(fieldName);
+  fieldDialog.showModal();
+});
+document.querySelector("#cancel-field").addEventListener("click", () => fieldDialog.close());
+fieldDialog.addEventListener("close", () => addFieldButton.focus());
+fieldName.addEventListener("input", () => fieldError(fieldName));
+fieldForm.addEventListener("submit", event => {
+  event.preventDefault();
+  const name = fieldName.value.trim();
+  if (!name) {
+    fieldError(fieldName, "Informe o nome da roça.");
+    fieldName.focus();
+    return;
+  }
+
+  fields = [...fields, {
+    id: makeId(),
+    name,
+    crop: fieldForm.elements.crop.value.trim(),
+    city: fieldForm.elements.city.value.trim(),
+  }];
+  persist(FIELDS_KEY, fields);
+  renderFields();
+  fieldDialog.close();
+  fieldFeedback.textContent = storageAvailable ? "Roça cadastrada." : "Roça cadastrada nesta sessão.";
+});
+
+window.addEventListener("storage", event => {
+  if (!storageAvailable) return;
+  if (event.key === FIELDS_KEY) {
+    fields = loadRecords(FIELDS_KEY, [EXAMPLE_FIELD], isValidField);
+    renderFields();
+  }
+  if (!event.key?.startsWith(EXPENSES_KEY)) return;
+  const changedField = fields.find(field => expensesKey(field) === event.key);
+  if (changedField) expenseCache.delete(changedField.id);
+  if (activeField && event.key === expensesKey(activeField)) {
+    expenses = loadExpenses(activeField);
+    expenseCache.set(activeField.id, expenses);
+    renderExpenses();
+    feedback.textContent = "Despesas atualizadas a partir de outra aba.";
+  }
+});
+
+const session = readSession();
+const previousField = fields.find(field => field.id === session);
+if (previousField) openField(previousField, false);
+else if (session !== null) showFields(false);

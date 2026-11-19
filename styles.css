@@ -283,3 +283,56 @@ h1 {
   .form-actions { justify-content: flex-end; }
   .form-actions .button { flex: 0 1 auto; }
 }
+
+.welcome {
+  max-width: 35rem;
+  margin-inline: auto;
+  margin-top: 0;
+  padding: clamp(1.25rem, 5vw, 2.5rem);
+}
+
+.welcome p {
+  margin-bottom: 1.5rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.screen-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.screen-heading h1 {
+  max-width: 100%;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.field-list {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1.25rem;
+  padding: 0;
+  list-style: none;
+}
+
+.field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: var(--white);
+}
+
+.field-details { min-width: 0; overflow-wrap: anywhere; }
+
+@media (max-width: 39.99rem) {
+  .welcome .button, #add-field { width: 100%; }
+}
