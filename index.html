@@ -1,1 +1,77 @@
-<!-- Estrutura da interface do AgroManage AI. -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5ed">
+  <title>Plantio de milho | AgroManage AI</title>
+  <meta name="description" content="Protótipo do AgroManage AI para registrar e acompanhar despesas agrícolas.">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+  <header class="topbar">
+    <div class="topbar-content">
+      <img class="brand" src="assets/logo-agromanage-ai.png" alt="AgroManage AI" width="194" height="65">
+      <p class="demo-label">Demonstração com dados fictícios</p>
+    </div>
+  </header>
+
+  <main class="page" id="conteudo" tabindex="-1">
+    <h1>Plantio de milho</h1>
+
+    <section class="summary" aria-labelledby="summary-title">
+      <div class="summary-text">
+        <h2 id="summary-title">Total de despesas</h2>
+        <p class="summary-amount" id="total">R$ 0,00</p>
+        <p class="summary-count" id="count"></p>
+      </div>
+      <button class="button button-add" type="button" id="add-expense">
+        <span aria-hidden="true">+</span> Adicionar despesa
+      </button>
+    </section>
+
+    <p class="status" id="feedback" role="status" aria-atomic="true"></p>
+    <p class="status status-warning" id="storage-warning" role="status" aria-atomic="true"></p>
+
+    <section class="ledger" aria-labelledby="ledger-title">
+      <h2 id="ledger-title">Despesas registradas</h2>
+      <ul class="expense-list" id="expenses" role="list"></ul>
+      <p class="empty" id="empty" hidden>Nenhuma despesa registrada.</p>
+    </section>
+
+    <p class="local-note">Os registros desta demonstração ficam neste navegador.</p>
+    <noscript><p>Ative o JavaScript para adicionar ou editar despesas.</p></noscript>
+  </main>
+
+  <dialog class="expense-dialog" id="expense-dialog" aria-labelledby="dialog-title">
+    <form id="expense-form" novalidate>
+      <h2 id="dialog-title">Adicionar despesa</h2>
+      <div class="field">
+        <label for="description">Descrição</label>
+        <input id="description" name="description" type="text" maxlength="100"
+               placeholder="Ex.: Adubo" required autofocus aria-describedby="description-error">
+        <p class="field-error" id="description-error" hidden></p>
+      </div>
+      <div class="field-pair">
+        <div class="field">
+          <label for="amount">Valor (R$)</label>
+          <input id="amount" name="amount" type="text" inputmode="decimal" maxlength="20"
+                 placeholder="0,00" required aria-describedby="amount-error">
+          <p class="field-error" id="amount-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="date">Data</label>
+          <input id="date" name="date" type="date" required aria-describedby="date-error">
+          <p class="field-error" id="date-error" hidden></p>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="button button-secondary" type="button" id="cancel">Cancelar</button>
+        <button class="button button-primary" type="submit" id="save">Salvar despesa</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

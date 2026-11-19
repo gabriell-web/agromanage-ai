@@ -1,1 +1,285 @@
-/* Estilos da interface do AgroManage AI. */
+:root {
+  color-scheme: light;
+  --forest: #18332a;
+  --green: #236547;
+  --green-hover: #1b523a;
+  --cream: #f7f5ed;
+  --white: #fff;
+  --soft-green: #ebf0e7;
+  --muted: #52645b;
+  --line: #d6dfd5;
+  --control-border: #83958b;
+  --focus: #137451;
+  --error: #9a3021;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--forest);
+  background: var(--cream);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
+h1, h2, p, ul { margin: 0; }
+button, input { font: inherit; }
+[hidden] { display: none !important; }
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 2;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.75rem;
+  color: var(--forest);
+  background: var(--white);
+  transform: translateY(-160%);
+}
+
+.skip-link:focus { transform: none; }
+
+.topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar-content, .page {
+  width: min(100% - 2rem, 62rem);
+  margin-inline: auto;
+}
+
+.topbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 4.4rem;
+}
+
+.brand {
+  display: block;
+  width: clamp(8.25rem, 39vw, 12.125rem);
+  height: auto;
+  margin-inline-start: -0.35rem;
+}
+
+.demo-label {
+  max-width: 10rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.35;
+  text-align: end;
+}
+
+.page { padding-block: clamp(1.75rem, 4vw, 3.4rem) 2.5rem; }
+
+h1 {
+  margin-bottom: clamp(1rem, 2.6vw, 1.6rem);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 720;
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+}
+
+.summary {
+  display: grid;
+  gap: 1.35rem;
+  align-items: end;
+  padding: clamp(1.25rem, 4vw, 2.4rem);
+  overflow: hidden;
+  border-radius: 1.25rem;
+  color: var(--white);
+  background: var(--forest) radial-gradient(ellipse at 100% 0%, #244f3d, transparent 68%);
+}
+
+.summary-text { min-width: 0; }
+.summary h2 { font-size: 1rem; font-weight: 550; color: #e0eee6; }
+
+.summary-amount {
+  margin-top: 0.3rem;
+  font-size: clamp(2.4rem, 7vw, 3.65rem);
+  font-weight: 720;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary-count {
+  min-height: 1.5em;
+  margin-top: 0.55rem;
+  font-size: 0.9375rem;
+  color: #d6e6dd;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-width: 2.75rem;
+  min-height: 3rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.65rem;
+  font-weight: 650;
+  line-height: 1.25;
+  cursor: pointer;
+}
+
+.button-add {
+  color: var(--forest);
+  background: var(--white);
+}
+
+.button-add:hover { background: var(--soft-green); }
+.button-add:focus-visible { outline-color: var(--white); }
+.button-add span { font-size: 1.3rem; line-height: 1; }
+
+.button-primary {
+  color: var(--white);
+  background: var(--green);
+}
+
+.button-primary:hover { background: var(--green-hover); }
+
+.button-secondary {
+  color: var(--forest);
+  background: var(--white);
+  border-color: var(--control-border);
+}
+
+.button-secondary:hover { background: var(--soft-green); }
+
+.status:not(:empty) {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.65rem;
+  background: var(--soft-green);
+  color: var(--forest);
+  font-size: 0.9375rem;
+}
+
+.status-warning:not(:empty) { background: #f9eadd; color: #6b3521; }
+
+.ledger {
+  margin-top: clamp(1.2rem, 3vw, 1.75rem);
+  padding: clamp(1rem, 3vw, 1.75rem);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--white);
+}
+
+.ledger h2, .expense-dialog h2 {
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+}
+
+.expense-list { padding: 0; list-style: none; }
+
+.expense {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding-block: 0.85rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.expense:first-child { margin-top: 0.55rem; }
+.expense:last-child { padding-bottom: 0; border-bottom: 0; }
+.expense-description { font-weight: 630; line-height: 1.35; overflow-wrap: anywhere; }
+.expense-date { display: block; margin-top: 0.2rem; color: var(--muted); font-size: 0.875rem; }
+
+.expense-actions {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  max-width: 38vw;
+}
+
+.expense-amount {
+  font-weight: 720;
+  text-align: end;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.button-edit {
+  min-height: 2.75rem;
+  padding-inline: 0.7rem;
+  color: var(--green);
+  background: var(--soft-green);
+  font-size: 0.9rem;
+}
+
+.button-edit:hover { background: #dce8db; }
+.empty { margin-top: 1rem; color: var(--muted); }
+
+.local-note {
+  margin-top: 1.1rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.expense-dialog {
+  width: min(31rem, 100%);
+  max-width: 100%;
+  max-height: calc(100% - 1rem);
+  margin: auto auto 0;
+  padding: clamp(1.15rem, 4.5vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: 1.2rem 1.2rem 0 0;
+  color: var(--forest);
+  background: var(--white);
+}
+
+.expense-dialog::backdrop { background: rgb(16 34 26 / 58%); }
+.expense-dialog h2 { margin-bottom: 1.25rem; }
+.field { min-width: 0; }
+.field-pair { display: grid; gap: 0.85rem; margin-top: 0.85rem; }
+.field label { display: block; margin-bottom: 0.35rem; font-weight: 620; }
+
+.field input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 3rem;
+  padding: 0.65rem 0.7rem;
+  border: 1px solid var(--control-border);
+  border-radius: 0.55rem;
+  color: var(--forest);
+  background: var(--white);
+}
+
+.field input::placeholder { color: var(--muted); }
+.field input[aria-invalid="true"] { border-color: var(--error); }
+
+.field-error {
+  margin-top: 0.35rem;
+  color: var(--error);
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+
+.form-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.45rem; }
+.form-actions .button { flex: 1 1 auto; }
+
+@media (min-width: 25rem) {
+  .demo-label { max-width: none; }
+  .field-pair { grid-template-columns: 1fr 1fr; }
+}
+
+@media (min-width: 40rem) {
+  .summary { grid-template-columns: minmax(0, 1fr) auto; }
+  .expense-actions { flex-direction: row; align-items: center; gap: 1.4rem; max-width: none; }
+  .expense-dialog { max-width: calc(100% - 2rem); margin: auto; border-radius: 1.2rem; }
+  .form-actions { justify-content: flex-end; }
+  .form-actions .button { flex: 0 1 auto; }
+}
